@@ -53,7 +53,7 @@ def swim_speed_dist(num_particles, dist='swim_speed_distribution.csv'):
 
     return b
 
-def ini_swimspeed_cells(width, length, num_cells=30):
+def ini_swimspeed_cells(width, length, num_cells=1000):
     x0 = np.random.rand(num_cells,2) * np.array([width,length])
     p0 = np.array([rand_unit_vect_2D() for _ in range(num_cells)])
 
@@ -63,10 +63,4 @@ def ini_swimspeed_cells(width, length, num_cells=30):
         ini_velocities[i] = vc[i] * p0[i]
 
     return x0, vc, ini_velocities, p0
-
-
-def calculate_vorticity(X,p,k):
-    fluid_vorticity = np.gradient(u_func(X),axis=(0,1)) 
-    c_prod  = np.cross(fluid_vorticity, p)
-    return c_prod 
 

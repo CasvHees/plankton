@@ -6,6 +6,7 @@ import constants
 import akashiwo_dist 
 
 
+
 # -------------functions-------------
 # calculate density at x, t point on pdfGrid d
 def f_rho(f):
@@ -76,19 +77,19 @@ def set_boundry(boundry=constants.boundary, width=constants.width,length=constan
     # convert the boundries to Boolean
     return Mask == 1
 
-def plot_velocity(u, steps, milestone, re, lid_vel, omega, figsize = (10,10), width = constants.width, length = constants.length):
+    #def plot_velocity(u, steps, milestone, re, lid_vel, omega, figsize = (10,10), width = constants.width, length = constants.length):
     
-    fig = plt.figure(figsize=figsize)
-    if lid_vel:
-        plt.title("lattice dimensions: (%d * %d), omega: %.1f, lid velocity = %.1f, steps: %d, Re: %0.1f " %(width, length, omega, lid_vel, steps, re))
-    else:
-        plt.title("lattice dimensions: (%d * %d), omega: %.1f, steps: %d, elapsed_time: %0.1f seconds" %(width, length, omega,steps, elapsed_time))
-    plt.streamplot(np.arange(width), np.arange(length), u[:,:, 0].T, u[:,:, 1].T)
-    plt.xlabel("lenght")
-    plt.ylabel("width")
-    plt.xticks(np.arange(0, length+1, 25))
-    plt.yticks(np.arange(0, width+1, 25))
-    plt.savefig("milestone_%d_%d_%d_%.1f_%d.png" %(milestone, width, length, omega,steps))
+    #fig = plt.figure(figsize=figsize)
+    #if lid_vel:
+    #    plt.title("lattice dimensions: (%d * %d), omega: %.1f, lid velocity = %.1f, steps: %d, Re: %0.1f " %(width, length, omega, lid_vel, steps, re))
+    #else:
+    #    plt.title("lattice dimensions: (%d * %d), omega: %.1f, steps: %d, elapsed_time: %0.1f seconds" %(width, length, omega,steps, elapsed_time))
+    #plt.streamplot(np.arange(width), np.arange(length), u[:,:, 0].T, u[:,:, 1].T)
+    #plt.xlabel("lenght")
+    #plt.ylabel("width")
+    #plt.xticks(np.arange(0, length+1, 25))
+    #plt.yticks(np.arange(0, width+1, 25))
+    #plt.savefig("milestone_%d_%d_%d_%.1f_%d.png" %(milestone, width, length, omega,steps))
 
 def calculate_re(omega, length, lid_vel):
     nu = 1/3 * (1/omega - 1/2)
@@ -99,7 +100,7 @@ def calculate_re(omega, length, lid_vel):
 # Before initialising the plankton cells, we need to have a steady state flow, under a certain threshold we say it has been reached:
 
 
-def check_steady_state(u_at_point, threshold=1e-5, window=1000, consecutive=5):
+def check_steady_state(u_at_point, threshold=1e-5, window=500, consecutive=3):
     """
     Check if the system has reached steady state based on the change in fluid velocity magnitude.
     
@@ -137,7 +138,16 @@ def check_steady_state(u_at_point, threshold=1e-5, window=1000, consecutive=5):
     
     return False
 
-    
 
 
+def calculate_dp_dt(p, vorticity, k, Psi=2):
+    dp_dt = 1/(2 * Psi) * (k - np.dot(k, p) * p) + 0.5 * np.cross(vorticity, p) 
+    return dp_dt 
+
+def calculate_dX_dt(X, p, u, Phi=np.power(70.0,-3)):
+    dX_dt = Phi * p + u 
+    return dX_dt 
+
+def k():
+    return np.array([0, 1])
 

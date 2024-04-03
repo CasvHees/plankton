@@ -12,5 +12,5 @@ length = 64
 width = 64
 omega = 1
 lid_vel = 2
-max_iter = 10000
+max_iter = 5000
 boundary = (True, True, False, True)
