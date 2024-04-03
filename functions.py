@@ -3,6 +3,8 @@ import numpy as np
 
 plt.rcParams.update({'font.size': 13})
 import constants
+import akashiwo_dist 
+
 
 # -------------functions-------------
 # calculate density at x, t point on pdfGrid d
@@ -63,7 +65,7 @@ def collision(f, omega):
     return f, rho, u
 
 
-def set_boundry(boundry, width, length):
+def set_boundry(boundry=constants.boundary, width=constants.width,length=constants.length):
     Mask = np.zeros((width, length))
 
     Mask[:,  0] = boundry[0]  # left
@@ -74,7 +76,7 @@ def set_boundry(boundry, width, length):
     # convert the boundries to Boolean
     return Mask == 1
 
-def plot_velocity(u, steps, milestone, re, lid_vel, omega, figsize = (10,10), width = 128, length = 128):
+def plot_velocity(u, steps, milestone, re, lid_vel, omega, figsize = (10,10), width = constants.width, length = constants.length):
     
     fig = plt.figure(figsize=figsize)
     if lid_vel:
@@ -93,19 +95,49 @@ def calculate_re(omega, length, lid_vel):
     return (lid_vel*length) / (nu)
 
 
-# H. Akashiwo
 
-def initialize_cells(num_cells, domain_size):
-    domain_size = 128
-    num_cells = 100
+# Before initialising the plankton cells, we need to have a steady state flow, under a certain threshold we say it has been reached:
 
-    positions = np.random.rand(num_cells, 2) * domain_size
-        #
-    orientations = np.random.randn(num_cells, 3)
-    orientations /= np.linalg.norm(orientations, axis=1)[:, np.newaxis]
+
+def check_steady_state(u_at_point, threshold=1e-5, window=1000, consecutive=5):
+    """
+    Check if the system has reached steady state based on the change in fluid velocity magnitude.
     
-    return positions, orientations
+    Parameters:
+        u_at_point (ndarray): Array containing fluid speed at a specific point over time.
+        threshold (float): Threshold for the mean change in fluid velocity magnitude to consider steady state.
+        window (int): Window size for calculating mean change.
+        consecutive (int): Number of consecutive iterations the mean change must be below the threshold.
+    
+    Returns:
+        bool: True if steady state is reached, False otherwise.
+    """
+    if len(u_at_point) < window + consecutive:
+        return False
+    
+    mean_changes = np.abs(u_at_point[window:] - u_at_point[:-window])  # Calculate mean changes
+    
+    # Truncate mean_changes to ensure its length is a multiple of window
+    num_chunks = len(mean_changes) // window
+    mean_changes = mean_changes[:num_chunks * window]
+    
+    # Reshape and calculate mean
+    mean_change = np.mean(mean_changes.reshape(-1, window), axis=1)
+    
+    # Check for consecutive iterations below threshold
+    steady_state_counter = 0
+    for change in mean_change:
+        if change < threshold:
+            steady_state_counter += 1
+        else:
+            steady_state_counter = 0
+        
+        if steady_state_counter >= consecutive:
+            return True
+    
+    return False
 
+    
 
 
 
