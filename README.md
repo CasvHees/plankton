@@ -1,2 +1,2 @@
 # Turbulence-driven phytoplankton patchiness
-![LBM](https://github.com/CasvHees/plankton/blob/main/LB_plankton_figs/figat_1500.png)
+![LBM](https://github.com/CasvHees/plankton/blob/main/LB_plankton_figs/Akashiwo_init.png)
